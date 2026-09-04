@@ -28,6 +28,11 @@ class Settings(BaseSettings):
 	# client itself, so a direct caller cannot forge its own address.
 	trusted_proxies: str = "127.0.0.1,::1"
 
+	# Where this version's source can be fetched. The AGPL requires every operator
+	# of a modified version to offer its source to the people using it, so a fork
+	# must point this at the fork.
+	source_url: str = "https://github.com/BlindSoldier52/translator_bot"
+
 	default_daily_message_limit: int = 500
 
 	log_level: str = "INFO"

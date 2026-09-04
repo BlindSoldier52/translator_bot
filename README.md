@@ -5,7 +5,7 @@
 ![python-telegram-bot 22.8](https://img.shields.io/badge/python--telegram--bot-22.8-26A5E4?logo=telegram&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)
 ![Accessibility: screen-reader first](https://img.shields.io/badge/accessibility-screen--reader%20first-6f42c1)
-![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-green)
+![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-green)
 
 A Telegram bot that translates for your group chat. It watches the group, and
 whenever someone writes in a language that isn't the group's main one, it
@@ -340,18 +340,30 @@ the people running it.
 Copyright (C) 2026 BlindSoldier52
 
 This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE. See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with
-this program. If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License along
+with this program. If not, see <https://www.gnu.org/licenses/>.
 
 The full text is in [LICENSE](LICENSE).
+
+### What the AGPL means if you run this
+
+The Affero licence exists for software like this, which people reach over a
+network. Section 13 goes beyond the ordinary GPL: **if you modify this bot and
+let anyone interact with your modified version — over Telegram, or through the
+web panel — you must offer those people the source of your version**, even
+though you never hand out a file. Running it unmodified obliges you to nothing.
+
+So if you fork it and deploy your fork, publish your fork. The bot's `/privacy`
+command and the panel's footer already carry a link to the source; point them at
+your repository rather than removing them, and you have complied.
 
 ---
 

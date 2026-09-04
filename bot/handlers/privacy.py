@@ -1,6 +1,8 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 
+from shared.config import get_settings
+
 PRIVACY_TEXT = (
 	"Here's what I do with your data.\n\n"
 	"Your password is hashed with argon2 the moment you send it, and the message you typed it "
@@ -24,8 +26,14 @@ PRIVACY_TEXT = (
 	"their own groups, never the content of anyone's messages."
 )
 
+SOURCE_TEXT = (
+	"I'm free software under the AGPL-3.0, which means you're entitled to read the exact "
+	"source I'm running. You'll find it at {url}"
+)
+
 
 async def privacy_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	if update.effective_chat is None or update.effective_chat.type != "private":
 		return
-	await update.message.reply_text(PRIVACY_TEXT)
+	source = SOURCE_TEXT.format(url=get_settings().source_url)
+	await update.message.reply_text(f"{PRIVACY_TEXT}\n\n{source}")

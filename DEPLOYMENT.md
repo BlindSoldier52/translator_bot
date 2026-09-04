@@ -142,6 +142,9 @@ Then edit it and fill in:
   check.
 - `PANEL_HOST` / `PANEL_PORT` — where the panel binds. These are read by the
   application itself, so what you set here is what is actually listened on.
+- `SOURCE_URL` — where this version's source can be fetched. The bot prints it
+  in `/privacy` and the panel shows it in the footer. **If you are running a
+  modified version, point this at your fork**; see the licence section below.
 
 There is no shared translation API key: every user brings their own through
 `/setapikey`, so there is nothing to put in `.env` for that.
@@ -473,6 +476,33 @@ a "Skip to main content" link for fast keyboard navigation.
 - Both services run as a dedicated unprivileged system user with systemd
   hardening (`ProtectSystem=strict`, `NoNewPrivileges`, empty capability set,
   and so on).
+
+## Licence and your obligations as an operator
+
+This project is licensed under the GNU Affero General Public License v3.0. The
+full text is in `LICENSE`.
+
+The Affero licence differs from the ordinary GPL in one way that matters
+directly to you, because what you are deploying is reachable over a network.
+Section 13 says that if you **modify** the program and let anyone interact with
+your modified version remotely, you must offer those users the Corresponding
+Source of your version — even though you never distribute a file to anyone.
+Both the Telegram bot and the web panel count as remote interaction.
+
+In practice:
+
+- Running it **unmodified** obliges you to nothing beyond keeping the licence
+  and copyright notices intact.
+- Running a **modified** version means publishing your modifications. Put your
+  fork somewhere readable and set `SOURCE_URL` to it. The offer is already
+  wired into `/privacy` and the panel footer, and both read that variable, so
+  setting it is the whole of the work.
+- Do not remove the source offer from `/privacy` or the footer. That is the
+  mechanism by which an operator complies; deleting it does not remove the
+  obligation, only the compliance.
+
+Purely private modification, where nobody but you ever interacts with the
+program, triggers nothing. That is deliberate in every free software licence.
 
 ## Limits and defences
 

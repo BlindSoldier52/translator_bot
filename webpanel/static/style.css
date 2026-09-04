@@ -255,3 +255,15 @@ button.danger {
 	color: var(--color-error);
 	background: var(--color-error-bg);
 }
+
+footer {
+	border-top: 1px solid var(--color-border);
+	margin-top: 2.5rem;
+	padding: 1rem 0;
+	color: var(--color-muted);
+	font-size: 0.875rem;
+}
+
+footer p {
+	margin: 0;
+}
