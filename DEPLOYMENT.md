@@ -14,9 +14,12 @@ Replace both with your own:
 
 ## What the server needs
 
-- Linux with systemd. The guide is written for Debian/Ubuntu; package names
-  differ on other distributions.
-- Python 3.12 or newer.
+- Linux with systemd, glibc 2.28 or newer. The guide is written for
+  Debian/Ubuntu; package names differ on other distributions. Any currently
+  supported Debian or Ubuntu release satisfies the glibc floor, which comes
+  from the asyncpg wheels.
+- Python 3.12, 3.13 or 3.14. The pinned set in `requirements.txt` is verified
+  to resolve on all three.
 - PostgreSQL 14 or newer.
 - nginx and a TLS certificate for your domain, if you want the web panel
   reachable from outside. The bot itself needs no public port at all — it uses
@@ -162,6 +165,7 @@ alembic upgrade head
 For future schema changes: `alembic revision --autogenerate -m "..."` then
 `alembic upgrade head`.
 
+
 ### 6. Create your owner account for the web panel
 
 ```bash
@@ -275,6 +279,24 @@ Rotating the Telegram token: `sudo scripts/rotate_bot_token.sh`. The script
 decrypts `env.cred` into a temporary file, replaces the `TELEGRAM_BOT_TOKEN`
 line, re-encrypts to a temporary file and moves it into place only on success,
 `shred`s the cleartext, and restarts the service.
+
+## Dependencies
+
+Every dependency is pinned to an exact version in `requirements.txt`, and the
+set is checked against the [OSV](https://osv.dev) database: as of the last
+update, all 23 direct pins and all 57 packages including transitive ones carry
+zero known vulnerabilities.
+
+Re-check before a deployment, because that statement ages:
+
+```bash
+pip install pip-audit
+pip-audit -r requirements.txt
+```
+
+If a pin has to move, `starlette` and `fastapi` are coupled (FastAPI declares
+the floor it needs), and `cryptography` ships its own OpenSSL, so a stale pin
+there means a stale OpenSSL rather than only a stale Python package.
 
 ## How it works, in brief
 

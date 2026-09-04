@@ -1,10 +1,11 @@
 # Translation Bot
 
-![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-3776AB?logo=python&logoColor=white)
+![Python 3.12 | 3.13 | 3.14](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-3776AB?logo=python&logoColor=white)
 ![PostgreSQL 14+](https://img.shields.io/badge/postgresql-14%2B-4169E1?logo=postgresql&logoColor=white)
-![python-telegram-bot 21.10](https://img.shields.io/badge/python--telegram--bot-21.10-26A5E4?logo=telegram&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
+![python-telegram-bot 22.8](https://img.shields.io/badge/python--telegram--bot-22.8-26A5E4?logo=telegram&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)
 ![Accessibility: screen-reader first](https://img.shields.io/badge/accessibility-screen--reader%20first-6f42c1)
+![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-green)
 
 A Telegram bot that translates for your group chat. It watches the group, and
 whenever someone writes in a language that isn't the group's main one, it
@@ -25,7 +26,7 @@ The condensed path. [DEPLOYMENT.md](DEPLOYMENT.md) explains every step, the
 hardening, and the things that will bite you; read it before running this
 anywhere real.
 
-**1. Dependencies.** Python 3.12+, PostgreSQL 14+, plus fonts and OCR:
+**1. Dependencies.** Python 3.12, 3.13 or 3.14, PostgreSQL 14+, plus fonts and OCR:
 
 ```bash
 sudo apt install python3-venv postgresql nginx \
@@ -333,6 +334,24 @@ the day. It resets at midnight, server time.
 Found a bug, or want something the bot doesn't do? Send `/feedback` in a
 private chat with the bot and write what's on your mind. It goes straight to
 the people running it.
+
+## License
+
+Copyright (C) 2026 BlindSoldier52
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
+
+The full text is in [LICENSE](LICENSE).
 
 ---
 
