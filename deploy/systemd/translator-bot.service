@@ -14,7 +14,7 @@ WorkingDirectory=/opt/translator-bot
 Environment=ENV=production
 
 LoadCredentialEncrypted=translator-bot-env:/etc/translator-bot/env.cred
-ExecStart=/bin/bash -c 'set -a; source "${CREDENTIALS_DIRECTORY}/translator-bot-env"; exec /opt/translator-bot/venv/bin/python -m bot.main'
+ExecStart=/bin/bash -c 'set -a; source "${CREDENTIALS_DIRECTORY}/translator-bot-env"; exec /opt/translator-bot/venv/bin/python -m bot'
 
 Restart=always
 RestartSec=5

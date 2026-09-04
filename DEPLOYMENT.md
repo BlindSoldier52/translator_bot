@@ -261,7 +261,15 @@ journalctl -u translator-panel.service -f
 ## Operation
 
 Running migrations on a system where `.env` has already been deleted and the
-secrets live in `env.cred`: see `deploy/run_migration.txt`.
+secrets live in `env.cred`:
+
+```bash
+sudo scripts/run_migration.sh                        # upgrade to the latest revision
+sudo scripts/run_migration.sh "upgrade head --sql"   # dry run, prints the SQL
+sudo scripts/run_migration.sh "downgrade -1"         # roll one revision back
+```
+
+The credential is decrypted into a transient unit's memory, never onto disk.
 
 Rotating the Telegram token: `sudo scripts/rotate_bot_token.sh`. The script
 decrypts `env.cred` into a temporary file, replaces the `TELEGRAM_BOT_TOKEN`
@@ -358,26 +366,40 @@ line, re-encrypts to a temporary file and moves it into place only on success,
 ## Project layout
 
 ```
-bot/                  - the Telegram bot (long polling)
-  handlers/
-  main.py
-webpanel/              - the FastAPI admin panel
-  __main__.py           - entry point: python -m webpanel
-  routes/
-  templates/            - semantic, screen-reader-friendly HTML
+bot/                     the Telegram bot (long polling)
+  __main__.py            entry point: python -m bot
+  main.py                application wiring, handler registration, jobs
+  constants.py           tunables: limits, intervals, flow and step names
+  handlers/              one module per conversation or command area
+webpanel/                the FastAPI admin panel
+  __main__.py            entry point: python -m webpanel
+  main.py                app, middleware, security headers
+  auth.py                sign-in, lockout, client address resolution
+  csrf.py                per-session CSRF tokens
+  routes/                one module per section
+  templates/             semantic, screen-reader-friendly HTML
   static/
-shared/                 - common code (config, DB, security, translation)
-  providers/             - adapters for personal keys (Anthropic, OpenAI, ...)
-  files/                  - extracting, chunking and rebuilding files
-  images/                  - OCR and drawing translations over images
-migrations/             - Alembic migrations
+shared/                  code both services use
+  config.py              settings, trusted-proxy resolution
+  db.py                  engine and transaction scope
+  models.py              SQLAlchemy models
+  security.py            argon2 hashing, credential validation
+  crypto.py              per-user encryption of stored API keys
+  lockout.py             shared, database-backed brute-force lockout
+  translation.py         detection and translation entry points
+  languages.py           the accepted ISO 639-1 list
+  providers/             adapters per provider (Anthropic, OpenAI, ...)
+  files/                 extracting, chunking and rebuilding files
+  images/                OCR and drawing translations over images
+migrations/              Alembic migrations
 scripts/
-  create_admin.py        - creates the panel's owner account
-  encrypt_env.sh          - encrypts .env with systemd-creds
-  rotate_bot_token.sh      - changes the Telegram token and restarts the bot
+  create_admin.py        creates the panel's owner account
+  encrypt_env.sh         encrypts .env with systemd-creds
+  rotate_bot_token.sh    changes the Telegram token and restarts the bot
+  run_migration.sh       runs Alembic from the encrypted credential
 deploy/
-  systemd/                - unit files for both services
-  nginx/                   - nginx config for the web panel
+  systemd/               unit files for both services
+  nginx/                 nginx config for the web panel
 ```
 
 ## Accessibility (the bot's messages)

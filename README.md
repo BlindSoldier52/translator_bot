@@ -1,9 +1,90 @@
 # Translation Bot
 
+![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-3776AB?logo=python&logoColor=white)
+![PostgreSQL 14+](https://img.shields.io/badge/postgresql-14%2B-4169E1?logo=postgresql&logoColor=white)
+![python-telegram-bot 21.10](https://img.shields.io/badge/python--telegram--bot-21.10-26A5E4?logo=telegram&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
+![Accessibility: screen-reader first](https://img.shields.io/badge/accessibility-screen--reader%20first-6f42c1)
+
 A Telegram bot that translates for your group chat. It watches the group, and
 whenever someone writes in a language that isn't the group's main one, it
 replies with a translation. It also reads text out of files and images, if the
 group admin turns that on.
+
+Everyone brings their own provider API key, so the bot costs its operator
+nothing to run. It uses no buttons anywhere, because the people it was built
+for read it through a screen reader.
+
+**Using the bot?** Carry on below. **Running your own copy?** Jump to
+[Quick start](#quick-start-self-hosting), or read
+[DEPLOYMENT.md](DEPLOYMENT.md) for the full guide.
+
+## Quick start (self-hosting)
+
+The condensed path. [DEPLOYMENT.md](DEPLOYMENT.md) explains every step, the
+hardening, and the things that will bite you; read it before running this
+anywhere real.
+
+**1. Dependencies.** Python 3.12+, PostgreSQL 14+, plus fonts and OCR:
+
+```bash
+sudo apt install python3-venv postgresql nginx \
+  fonts-dejavu-core fonts-noto-core fonts-noto-cjk \
+  tesseract-ocr tesseract-ocr-all
+```
+
+**2. Code and virtualenv:**
+
+```bash
+git clone https://github.com/BlindSoldier52/translator_bot.git /opt/translator-bot
+cd /opt/translator-bot
+python3 -m venv venv
+venv/bin/pip install -r requirements.txt
+```
+
+**3. Database:**
+
+```bash
+sudo -u postgres createuser translator_bot
+sudo -u postgres createdb -O translator_bot translator_bot
+sudo -u postgres psql -c "ALTER ROLE translator_bot PASSWORD 'a-long-random-password';"
+```
+
+**4. Configuration.** Copy the template and fill in the four required values:
+
+```bash
+cp .env.example .env && chmod 600 .env
+python3 -c "import secrets; print(secrets.token_urlsafe(48))"   # run twice
+```
+
+`TELEGRAM_BOT_TOKEN` from [@BotFather](https://t.me/BotFather) — and in
+BotFather run `/setprivacy` → **Disable**, or the bot never sees ordinary group
+messages. `DATABASE_URL` with the password from step 3. `SESSION_SECRET_KEY`
+and `API_KEY_ENCRYPTION_KEY` from the two generated values. The encryption key
+is required and **can never be rotated**: change it and every stored API key
+becomes unreadable.
+
+**5. Migrate and create your panel account:**
+
+```bash
+set -a; source .env; set +a
+venv/bin/alembic upgrade head
+venv/bin/python scripts/create_admin.py
+```
+
+**6. Run it.** For a first look, in two terminals:
+
+```bash
+venv/bin/python -m bot           # the Telegram bot
+venv/bin/python -m webpanel      # the admin panel on 127.0.0.1:8000
+```
+
+For anything permanent, use the systemd units and nginx config in `deploy/`,
+and encrypt your secrets with `scripts/encrypt_env.sh` so `.env` can be deleted
+from disk. DEPLOYMENT.md covers both.
+
+**7. Try it.** Message the bot `/start` to make an account, `/setapikey` to give
+it a provider key, then add it to a group you administer.
 
 ## You need your own API key
 

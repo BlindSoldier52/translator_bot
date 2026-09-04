@@ -1,9 +1,0 @@
-sudo systemd-run --pty \
-  --unit=translator-bot-migrate \
-  -p User=translatorbot -p Group=translatorbot \
-  -p LoadCredentialEncrypted=translator-bot-env:/etc/translator-bot/env.cred \
-  --working-directory=/opt/translator-bot \
-  /bin/bash -c 'set -a; source "$CREDENTIALS_DIRECTORY/translator-bot-env"; venv/bin/alembic upgrade head'
-
-# dry run (prints the SQL without executing it): replace "upgrade head" with "upgrade head --sql"
-# rollback if needed: replace "upgrade head" with "downgrade -1"
