@@ -95,6 +95,11 @@ Then edit it and fill in:
 - `PANEL_ALLOWED_HOSTS` — comma-separated `Host` header values the panel will answer to, e.g. `example.com,www.example.com`. Leave it as `*` to disable the check.
 - `PANEL_HOST` / `PANEL_PORT` — where the panel binds. These are read by the application itself, so what you set here is what is actually listened on.
 - `SOURCE_URL` — where this version's source can be fetched. The bot prints it in `/source` and the panel shows it in the footer. **If you are running a modified version, point this at your fork**; see the licence section below.
+- `MAX_FILE_SIZE_MB` and the three `TELEGRAM_API_*` values — leave them alone unless you want files larger than 20 MB, which needs a Bot API server of your own. See "Raising the 20 MB file limit" below.
+- `MAX_EXTRACTED_CHARS`, `MAX_BATCHES_PER_FILE`, `MAX_BATCHES_PER_IMAGE` — how much of a file is actually translated, and what one file may cost. The defaults are sensible; the same section explains when to change them.
+- `DEFAULT_DAILY_MESSAGE_LIMIT` — the global daily translation ceiling used until you set one in the panel, which then takes over.
+- `LOG_LEVEL` — `INFO` by default. `DEBUG` is noisy but never logs credentials or message content.
+- `ENV` — leave it `production`. Only `development` makes the application read `.env` through python-dotenv; in production the values come from systemd-creds or the environment, which is why deleting `.env` after step 8 is safe.
 
 There is no shared translation API key: every user brings their own through `/setapikey`, so there is nothing to put in `.env` for that.
 
