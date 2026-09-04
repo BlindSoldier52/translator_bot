@@ -44,13 +44,14 @@ IMAGE_OUTPUT_MODE_TEXT = "text"
 IMAGE_OUTPUT_MODE_OVERLAY = "overlay"
 IMAGE_OUTPUT_MODE_BOTH = "both"
 
-MAX_ALLOWED_FILE_SIZE_MB = 20
-MAX_ALLOWED_IMAGE_SIZE_MB = 20
-TELEGRAM_MAX_DOWNLOAD_BYTES = 20 * 1024 * 1024
+# What each Bot API can actually carry, for validating MAX_FILE_SIZE_MB.
+CLOUD_BOT_API_MAX_FILE_MB = 20
+LOCAL_BOT_API_MAX_FILE_MB = 2000
 
-MAX_BATCHES_PER_FILE = 60
-MAX_BATCHES_PER_IMAGE = 20
 TELEGRAM_MESSAGE_LIMIT = 4096
+
+# Downloading hundreds of megabytes needs far longer than the default 5s read.
+FILE_TRANSFER_TIMEOUT_SECONDS = 600
 
 DEFAULT_MAINTENANCE_MESSAGE = (
 	"I'm down for maintenance right now, back to translating again soon. Thanks for your patience!"

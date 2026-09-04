@@ -10,7 +10,6 @@ from bot.constants import (
 	IMAGE_OUTPUT_MODE_BOTH,
 	IMAGE_OUTPUT_MODE_OVERLAY,
 	IMAGE_OUTPUT_MODE_TEXT,
-	MAX_BATCHES_PER_IMAGE,
 	STEP_IMAGE_LANGUAGE,
 )
 from bot.handlers.common import clear_flow, split_for_telegram
@@ -28,6 +27,7 @@ from bot.handlers.translate import (
 	resolve_translation_key,
 	warn_missing_key,
 )
+from shared.config import get_settings
 from shared.db import session_scope
 from shared.files import group_pieces_into_batches
 from shared.images import ImageTranslationError, build_overlay_image, read_image_text
@@ -304,7 +304,7 @@ async def translate_image(
 		return
 
 	batches = group_pieces_into_batches([" ".join(line.text.split()) for line in result.lines])
-	if len(batches) > MAX_BATCHES_PER_IMAGE:
+	if len(batches) > get_settings().max_batches_per_image:
 		await quota.give_back()
 		await message.reply_text(TOO_MUCH_TEXT_MESSAGE)
 		return

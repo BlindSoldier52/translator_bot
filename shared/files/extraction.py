@@ -4,11 +4,11 @@ import zipfile
 from dataclasses import dataclass
 from io import BytesIO
 
+from shared.config import get_settings
 from shared.files.errors import FileTranslationError
 
 SUPPORTED_EXTENSIONS = (".txt", ".pdf", ".docx", ".srt")
 
-MAX_EXTRACTED_CHARS = 400_000
 MAX_UNITS = 20_000
 MAX_PDF_PAGES = 500
 MAX_UNCOMPRESSED_BYTES = 80 * 1024 * 1024
@@ -37,6 +37,10 @@ FALLBACK_ENCODINGS = ("utf-8", "cp1252")
 UNREADABLE_TEXT_MESSAGE = (
 	"I couldn't work out the character encoding of that file. Save it as UTF-8 and send it again."
 )
+
+
+def max_extracted_chars() -> int:
+	return get_settings().max_extracted_chars
 
 
 def decode_text(data: bytes) -> str:
@@ -79,7 +83,7 @@ def split_paragraphs(text: str) -> list[str]:
 
 
 def guard_text_size(text: str) -> str:
-	if len(text) > MAX_EXTRACTED_CHARS:
+	if len(text) > max_extracted_chars():
 		raise FileTranslationError(TOO_MUCH_TEXT_MESSAGE)
 	return text
 
@@ -111,7 +115,7 @@ def guard_archive(data: bytes) -> None:
 
 
 def extract_txt(data: bytes) -> ExtractedContent:
-	if len(data) > MAX_EXTRACTED_CHARS * 4:
+	if len(data) > max_extracted_chars() * 4:
 		raise FileTranslationError(TOO_MUCH_TEXT_MESSAGE)
 	text = guard_text_size(decode_text(data).strip())
 	if not text:
@@ -142,7 +146,7 @@ def extract_pdf(data: bytes) -> ExtractedContent:
 		for page in reader.pages:
 			page_text = page.extract_text() or ""
 			total += len(page_text)
-			if total > MAX_EXTRACTED_CHARS:
+			if total > max_extracted_chars():
 				raise FileTranslationError(TOO_MUCH_TEXT_MESSAGE)
 			pages_text.append(page_text)
 	except FileTranslationError:
@@ -198,7 +202,7 @@ def extract_docx(data: bytes) -> ExtractedContent:
 def extract_srt(data: bytes) -> ExtractedContent:
 	import srt as srt_lib
 
-	if len(data) > MAX_EXTRACTED_CHARS * 4:
+	if len(data) > max_extracted_chars() * 4:
 		raise FileTranslationError(TOO_MUCH_TEXT_MESSAGE)
 
 	try:

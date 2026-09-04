@@ -13,6 +13,7 @@ from telegram.ext import (
 from bot.constants import (
 	ADMIN_RECHECK_INTERVAL_SECONDS,
 	ANNOUNCEMENT_POLL_INTERVAL_SECONDS,
+	FILE_TRANSFER_TIMEOUT_SECONDS,
 	LOGIN_ATTEMPT_PRUNE_INTERVAL_SECONDS,
 	MAX_CONCURRENT_UPDATES,
 )
@@ -126,13 +127,21 @@ async def post_init(application: Application) -> None:
 
 def build_application() -> Application:
 	settings = get_settings()
-	application = (
+	builder = (
 		Application.builder()
 		.token(settings.telegram_bot_token)
 		.concurrent_updates(MAX_CONCURRENT_UPDATES)
 		.post_init(post_init)
-		.build()
+		.base_url(settings.telegram_api_base_url)
+		.base_file_url(settings.telegram_api_base_file_url)
+		.local_mode(settings.telegram_local_mode)
 	)
+	if settings.max_file_size_mb > 20:
+		# A large download over a slow link needs longer than the default 5s read.
+		builder = builder.read_timeout(FILE_TRANSFER_TIMEOUT_SECONDS).write_timeout(
+			FILE_TRANSFER_TIMEOUT_SECONDS
+		)
+	application = builder.build()
 
 	application.add_handler(TypeHandler(Update, stop_blocked_users), group=-1)
 

@@ -293,6 +293,29 @@ Built to screen-reader requirements: a single `<h1>` per page with a logical hea
 - Every state-changing route is behind a CSRF check and an authentication check; the session is cleared before sign-in to prevent session fixation.
 - Both services run as a dedicated unprivileged system user with systemd hardening (`ProtectSystem=strict`, `NoNewPrivileges`, empty capability set, and so on).
 
+## Raising the 20 MB file limit
+
+Telegram's cloud Bot API will not hand a bot any file larger than 20 MB. That is a limit of the API, not of this code, and no setting here can work around it. The way past it is to run Telegram's own [telegram-bot-api](https://github.com/tdlib/telegram-bot-api) server, which raises the ceiling to 2000 MB.
+
+Build and run that server with an `api_id` and `api_hash` from [my.telegram.org](https://my.telegram.org), then point this bot at it:
+
+```
+TELEGRAM_API_BASE_URL=http://127.0.0.1:8081/bot
+TELEGRAM_API_BASE_FILE_URL=http://127.0.0.1:8081/file/bot
+TELEGRAM_LOCAL_MODE=true
+MAX_FILE_SIZE_MB=2000
+```
+
+`TELEGRAM_LOCAL_MODE=true` tells the library the server is local, so files are read from disk instead of fetched over HTTP. Setting `MAX_FILE_SIZE_MB` above what the configured API can serve is refused at startup, with a message saying why, rather than failing halfway through a download as an unexplained Telegram error.
+
+Three things bite after you raise it, and they are the reason the default stays at 20:
+
+- **Memory.** Files are handled entirely in memory, deliberately, so nothing is ever written to disk. A 500 MB upload is a 500 MB allocation plus whatever extraction builds on top. The bot unit ships `MemoryMax=2G`; raise it in proportion, or the kernel will kill the bot mid-translation.
+- **Text volume, not file size, is what usually binds.** `MAX_EXTRACTED_CHARS` (400,000) and `MAX_BATCHES_PER_FILE` (60 calls, roughly 180,000 characters of actual translation) cap how much of a file is translated regardless of how large it is. A 500 MB PDF that is mostly scanned images may translate fine; a 30 MB plain-text file will hit the character guard long before the size limit. Raise these together with the size, or raising the size changes nothing you can see.
+- **Cost.** A batch is one API call against somebody's personal key. `MAX_BATCHES_PER_FILE` is the ceiling on what a single file can spend, and the daily quota is charged per call. Raising it raises what one message can cost the key's owner.
+
+Per-group settings still apply on top: an admin's `/filesettings` size limit is honoured whenever it is lower than the deployment ceiling, so raising the ceiling widens what is possible without changing what any existing group already allows.
+
 ## Data protection is yours, not this project's
 
 This software ships no privacy policy, and the bot has no `/privacy` command. That is deliberate. Anyone can run it, on any host, in any country, on a modified copy — so the project cannot honestly state where data lives, who can reach it, how long it is kept, or which law applies. Only you can.
@@ -330,7 +353,7 @@ A few things worth knowing when you run this in production:
   The counter lives in the `login_attempts` table, not in process memory, so the bot, the panel and any number of panel workers all draw on one budget rather than one each, and a restart does not hand an attacker a fresh set of attempts. Counting is a single atomic upsert, so simultaneous failures increment rather than overwrite each other. The bot prunes rows that are neither locked nor recent once an hour. Every failure is logged with `logger.warning`.
 
 - **Forwarded addresses**: `X-Forwarded-For` is honoured only when the immediate peer is listed in `TRUSTED_PROXIES`, and only its last entry — the one our own proxy appended. Everything before that came from the caller. Without this an attacker reaching the app directly could send a fresh header on every attempt and never fill a per-IP bucket.
-- **Files**: one file may not exceed 60 API calls (`MAX_BATCHES_PER_FILE` in `bot/constants.py`), and one image 20. The daily quota is consumed proportionally — one call, one unit — and refunded if the translation fails. Extraction refuses more than 400,000 characters, more than 500 PDF pages, and `.docx` archives that inflate more than 150× their size on disk.
+- **Files**: one file may not exceed `MAX_BATCHES_PER_FILE` API calls, 60 by default, and one image `MAX_BATCHES_PER_IMAGE`, 20. The daily quota is consumed proportionally — one call, one unit — and refunded if the translation fails. Extraction refuses more than `MAX_EXTRACTED_CHARS` characters, 400,000 by default, more than 500 PDF pages, and `.docx` archives that inflate more than 150× their size on disk. File size is capped by `MAX_FILE_SIZE_MB`; see "Raising the 20 MB file limit" above.
 - **Truncated translations**: the output token budget scales with the length of the input rather than being a fixed number, and the reply is checked for having been cut off (`stop_reason` / `finish_reason`). A truncated translation is reported as a failure instead of being handed back as though it were complete.
 - **Concurrency**: the bot processes up to 32 updates at once (`MAX_CONCURRENT_UPDATES`), so one large file no longer blocks everybody. A single user cannot translate two files at the same time.
 - **nginx rate limits**: 5 requests/minute on `/login`, 60/minute elsewhere, at most 20 simultaneous connections per IP.

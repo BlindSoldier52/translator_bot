@@ -4,10 +4,25 @@ from telegram import Bot
 from telegram.error import TelegramError
 
 from bot.constants import AUTO_DETECT_CODE, TELEGRAM_MESSAGE_LIMIT
+from shared.config import get_settings
 from shared.providers import PROVIDERS
 from shared.translation import COMMON_LANGUAGES
 
 logger = logging.getLogger(__name__)
+
+
+def max_file_mb() -> int:
+	"""The largest file this deployment accepts, in MB.
+
+	Telegram's cloud Bot API will not hand a bot anything over 20 MB, so that is
+	the default. An operator running their own telegram-bot-api server can raise
+	MAX_FILE_SIZE_MB to whatever that server allows, up to 2000.
+	"""
+	return get_settings().max_file_size_mb
+
+
+def max_file_bytes() -> int:
+	return max_file_mb() * 1024 * 1024
 
 
 def split_for_telegram(text: str) -> list[str]:

@@ -4,7 +4,7 @@
 
 A Telegram bot that translates for your group chat. It watches the group, and whenever someone writes in a language that isn't the group's main one, it replies with a translation. It also reads text out of files and images, if the group admin turns that on.
 
-Everyone brings their own provider API key, so the bot costs its operator nothing to run. It uses no buttons anywhere, because the people it was built for read it through a screen reader.
+Everyone brings their own provider API key, so the bot costs its operator nothing to run.
 
 **Using the bot?** Carry on below. **Running your own copy?** Jump to [Quick start](#quick-start-self-hosting), or read [DEPLOYMENT.md](DEPLOYMENT.md) for the full guide.
 
@@ -130,7 +130,7 @@ The bot can read `.txt`, `.pdf`, `.docx` and `.srt` files. With subtitles it onl
 
 The admin decides which of those types are allowed, how big a file can be, and whether the bot replies with the translated text in the chat or builds a new file in the same format and sends that back.
 
-There's a ceiling on how much text one file may contain, on top of the size limit in megabytes. A file that would take more than sixty calls to the translation API is turned down with a note asking you to split it up, and the daily allowance is charged per call, not per file. That keeps one big document from quietly spending a whole day's budget, or from making everyone else wait.
+There's a ceiling on how much text one file may contain, on top of the size limit in megabytes. A file that would take more than sixty calls to the translation API is turned down with a note asking you to split it up, and the daily allowance is charged per call, not per file. That keeps one big document from quietly spending a whole day's budget, or from making everyone else wait. Whoever runs the bot can raise both ceilings; the numbers here are the defaults.
 
 You can also use this in a private chat with the bot, with your own settings. Send a file and the bot asks which language you want it in.
 
@@ -155,21 +155,20 @@ All of it lives in `/filesettings`, in a private chat with the bot. If you manag
 For files:
 
 - File types: which of `.txt`, `.pdf`, `.docx` and `.srt` are allowed
-- Size limit: the biggest file the bot will accept, in MB, up to 20
+- Size limit: the biggest file the bot will accept, in MB, up to whatever ceiling the person running the bot has set. That is 20 MB by default, because Telegram's own API will not give a bot anything larger, but an operator running their own Bot API server can raise it.
 - Output: `text` for a reply in the chat, `file` for a translated file back
 - Daily limit: `shared` to count against the group's normal daily limit, or `separate` to give files their own allowance
 - On or off: `on` and `off` turn the whole thing on and off
 
 For images:
 
-- Size limit: the biggest image the bot will accept, in MB, up to 20
+- Size limit: the biggest image the bot will accept, in MB, up to the same ceiling as files
 - Output: `text`, `overlay`, or `both`
 - Daily limit: `shared` or `separate`, same as files
 - On or off: `on` and `off`
 
 Changes take effect straight away, on the very next file or image.
 
-One thing to know about how the bot talks: it never uses buttons. Everything is a question you answer with an ordinary word, because buttons and lists don't read well on screen readers.
 
 ## Commands
 

@@ -9,11 +9,9 @@ from telegram.ext import ContextTypes
 from bot.constants import (
 	FILE_OUTPUT_MODE_FILE,
 	FLOW_FILE_TRANSLATE_LANGUAGE,
-	MAX_BATCHES_PER_FILE,
 	STEP_FILE_LANGUAGE,
-	TELEGRAM_MAX_DOWNLOAD_BYTES,
 )
-from bot.handlers.common import clear_flow, join_words, split_for_telegram
+from bot.handlers.common import clear_flow, join_words, max_file_bytes, split_for_telegram
 from bot.handlers.translate import (
 	QuotaTarget,
 	TranslationKey,
@@ -22,6 +20,7 @@ from bot.handlers.translate import (
 	resolve_translation_key,
 	warn_missing_key,
 )
+from shared.config import get_settings
 from shared.db import session_scope
 from shared.files import (
 	FileTranslationError,
@@ -313,7 +312,7 @@ async def translate_document(
 
 	pieces, owners = split_units_for_translation(content.units)
 	batches = group_pieces_into_batches(pieces)
-	if len(batches) > MAX_BATCHES_PER_FILE:
+	if len(batches) > get_settings().max_batches_per_file:
 		await quota.give_back()
 		await message.reply_text(TOO_MUCH_TEXT_MESSAGE)
 		return
@@ -474,8 +473,8 @@ def extension_of(file_name: str | None) -> str:
 
 def size_ceiling(max_size_mb: int | None) -> int:
 	if not max_size_mb:
-		return TELEGRAM_MAX_DOWNLOAD_BYTES
-	return min(max_size_mb * 1024 * 1024, TELEGRAM_MAX_DOWNLOAD_BYTES)
+		return max_file_bytes()
+	return min(max_size_mb * 1024 * 1024, max_file_bytes())
 
 
 async def check_extension(message, extension: str, allowed: list[str], private: bool = False) -> bool:

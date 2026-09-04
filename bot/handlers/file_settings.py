@@ -11,8 +11,6 @@ from bot.constants import (
 	FLOW_FILE_SETTINGS,
 	IMAGE_OUTPUT_MODE_OVERLAY,
 	IMAGE_OUTPUT_MODE_TEXT,
-	MAX_ALLOWED_FILE_SIZE_MB,
-	MAX_ALLOWED_IMAGE_SIZE_MB,
 	STEP_FILE_CHOICE,
 	STEP_FILE_DAILY_LIMIT,
 	STEP_FILE_EXTENSIONS,
@@ -26,7 +24,7 @@ from bot.constants import (
 	STEP_IMAGE_MAX_SIZE,
 	STEP_IMAGE_OUTPUT_MODE,
 )
-from bot.handlers.common import clear_flow, join_words
+from bot.handlers.common import clear_flow, join_words, max_file_mb
 from shared.db import session_scope
 from shared.files import SUPPORTED_EXTENSIONS
 from shared.models import AppSettings, Group, User
@@ -409,7 +407,7 @@ def prompt_for(view: FileSettingsView, section: str, choice: str) -> tuple[str, 
 			return (
 				STEP_FILE_MAX_SIZE,
 				"Send me the biggest file size you want to allow, as a plain number of MB between "
-				f"1 and {MAX_ALLOWED_FILE_SIZE_MB}. It's {view.max_size_mb} MB right now.",
+				f"1 and {max_file_mb()}. It's {view.max_size_mb} MB right now.",
 			)
 		if choice == "output":
 			return (
@@ -429,7 +427,7 @@ def prompt_for(view: FileSettingsView, section: str, choice: str) -> tuple[str, 
 		return (
 			STEP_IMAGE_MAX_SIZE,
 			"Send me the biggest image size you want to allow, as a plain number of MB between 1 "
-			f"and {MAX_ALLOWED_IMAGE_SIZE_MB}. It's {view.image_max_size_mb} MB right now.",
+			f"and {max_file_mb()}. It's {view.image_max_size_mb} MB right now.",
 		)
 	if choice == "output":
 		return (
@@ -457,14 +455,14 @@ async def apply_value(
 		return f"{view.title} now accepts {join_words(extensions)}.", None
 
 	if step == STEP_FILE_MAX_SIZE:
-		value, error = parse_positive_number(answer, MAX_ALLOWED_FILE_SIZE_MB)
+		value, error = parse_positive_number(answer, max_file_mb())
 		if error:
 			return None, error
 		await save_setting(scope, target_id, telegram_user_id, "file_max_size_mb", value)
 		return f"The file size limit for {view.title} is now {value} MB.", None
 
 	if step == STEP_IMAGE_MAX_SIZE:
-		value, error = parse_positive_number(answer, MAX_ALLOWED_IMAGE_SIZE_MB)
+		value, error = parse_positive_number(answer, max_file_mb())
 		if error:
 			return None, error
 		await save_setting(scope, target_id, telegram_user_id, "image_max_size_mb", value)
@@ -549,7 +547,7 @@ def parse_positive_number(text: str, maximum: int | None = None) -> tuple[int | 
 	if value <= 0:
 		return None, "That has to be a positive number, zero or less won't work."
 	if maximum is not None and value > maximum:
-		return None, f"Telegram won't let me download anything bigger than {maximum} MB, so that's the ceiling."
+		return None, f"I can't take anything bigger than {maximum} MB here, so that's the ceiling."
 	return value, None
 
 
