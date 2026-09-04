@@ -1,0 +1,37 @@
+# Secrets. Nothing here may ever reach the repository.
+.env
+.env.*
+!.env.example
+*.env.encrypted
+*.cred
+secrets.env
+*.pem
+*.key
+
+# Local databases and dumps
+*.db
+*.sqlite
+*.sqlite3
+*.sql.gz
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OCR / language models fetched at runtime
+models/*.bin
+models/*.ftz
+
+# Logs and editor noise
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

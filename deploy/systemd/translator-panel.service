@@ -1,0 +1,51 @@
+# Replace /opt/translator-bot with the real install path before copying this
+# file into /etc/systemd/system/.
+
+[Unit]
+Description=Translator Bot - admin web panel
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=translatorbot
+Group=translatorbot
+WorkingDirectory=/opt/translator-bot
+Environment=ENV=production
+
+LoadCredentialEncrypted=translator-bot-env:/etc/translator-bot/env.cred
+ExecStart=/bin/bash -c 'set -a; source "${CREDENTIALS_DIRECTORY}/translator-bot-env"; exec /opt/translator-bot/venv/bin/python -m webpanel'
+
+Restart=always
+RestartSec=5
+
+MemoryHigh=256M
+MemoryMax=512M
+TasksMax=64
+LimitNOFILE=1024
+CPUQuota=50%
+
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=read-only
+ProtectClock=true
+ProtectHostname=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallArchitectures=native
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

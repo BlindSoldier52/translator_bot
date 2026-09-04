@@ -1,0 +1,16 @@
+# The project is developed on Windows and deployed on Linux. Everything here is
+# checked out with LF endings: a shell script or a systemd unit with CRLF fails
+# on the server ("bad interpreter"), and Python source stays consistent either
+# way.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary

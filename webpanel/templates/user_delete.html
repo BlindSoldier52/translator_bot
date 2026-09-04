@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Delete {{ user.username }} - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>Delete {{ user.username }}?</h1>
+<p><a href="/users">&larr; Back to users</a></p>
+
+<p>This cannot be undone. Read what happens before you confirm.</p>
+
+<h2>What gets deleted</h2>
+<ul>
+	<li>The account <strong>{{ user.username }}</strong>, Telegram ID {{ user.telegram_user_id }}, created {{ user.created_at.strftime("%Y-%m-%d") }}.</li>
+	<li>Their stored API key{% if user.api_key_provider %}, currently a {{ user.api_key_provider }} key{% else %}, if they had one{% endif %}.</li>
+	<li>{{ feedback_count }} feedback message{{ "" if feedback_count == 1 else "s" }} they sent.</li>
+	<li>Their announcement delivery records.</li>
+</ul>
+
+<h2>What is kept</h2>
+{% if groups %}
+<p>These groups stay in the database with their language and their file and image settings, but they lose their owner and go inactive. The bot stops translating in them until a current admin runs <code>/reauthenticate</code> there.</p>
+<ul>
+	{% for group in groups %}
+	<li>{{ group.title }}</li>
+	{% endfor %}
+</ul>
+{% else %}
+<p>This account doesn't manage any group, so no group is affected.</p>
+{% endif %}
+
+<form method="post" action="/users/{{ user.id }}/delete" class="inline-form">
+	{{ csrf_input(request) }}
+	<button type="submit" class="danger">Yes, delete {{ user.username }}</button>
+</form>
+<p><a href="/users">Cancel</a></p>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Groups - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>Groups</h1>
+
+<table>
+	<caption>All groups the bot has been authenticated in</caption>
+	<thead>
+		<tr>
+			<th scope="col">Group</th>
+			<th scope="col">Owner</th>
+			<th scope="col">Language</th>
+			<th scope="col">Status</th>
+			<th scope="col">Daily limit</th>
+			<th scope="col">Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for group in groups %}
+		<tr>
+			<th scope="row">{{ group.title }}</th>
+			<td>{{ group.owner_username or "-" }}</td>
+			<td>{{ group.language_label }}</td>
+			<td>
+				{% if group.is_blocked %}
+				<span class="status-badge status-blocked">Blocked</span>
+				{% elif group.is_active %}
+				<span class="status-badge status-ok">Active</span>
+				{% else %}
+				<span class="status-badge status-blocked">Inactive</span>
+				{% endif %}
+			</td>
+			<td>
+				<form method="post" action="/groups/{{ group.id }}/limit" class="inline-form">
+					{{ csrf_input(request) }}
+					<label for="limit-{{ group.id }}" class="visually-hidden">Daily translation limit for {{ group.title }}</label>
+					<input id="limit-{{ group.id }}" type="number" name="daily_message_limit" min="1" value="{{ group.daily_message_limit or '' }}" aria-describedby="limit-hint-{{ group.id }}">
+					<button type="submit">Set limit</button>
+					<p id="limit-hint-{{ group.id }}" class="visually-hidden">Leave blank to use the global default limit.</p>
+				</form>
+			</td>
+			<td>
+				<form method="post" action="/groups/{{ group.id }}/language" class="inline-form">
+					{{ csrf_input(request) }}
+					<label for="language-{{ group.id }}" class="visually-hidden">New language for {{ group.title }}</label>
+					<select id="language-{{ group.id }}" name="language_code">
+						{% for code, name in languages.items() %}
+						<option value="{{ code }}" {% if code == group.primary_language %}selected{% endif %}>{{ name }}</option>
+						{% endfor %}
+					</select>
+					<button type="submit">Update language</button>
+				</form>
+				<form method="post" action="/groups/{{ group.id }}/{{ 'unblock' if group.is_blocked else 'block' }}" class="inline-form">
+					{{ csrf_input(request) }}
+					<button type="submit" class="{{ 'secondary' if group.is_blocked else 'danger' }}">
+						{{ "Unblock " ~ group.title if group.is_blocked else "Block " ~ group.title }}
+					</button>
+				</form>
+			</td>
+		</tr>
+		{% else %}
+		<tr>
+			<td colspan="6">No groups yet.</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

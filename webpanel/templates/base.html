@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block title %}Translator Bot Admin{% endblock %}</title>
+	<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+	<a class="skip-link" href="#main-content">Skip to main content</a>
+
+	{% if admin %}
+	<header class="site-header">
+		<nav aria-label="Main navigation">
+			<ul class="nav-list">
+				<li><a href="/">Dashboard</a></li>
+				<li><a href="/groups">Groups</a></li>
+				<li><a href="/users">Users</a></li>
+				<li><a href="/announcements">Announcements</a></li>
+				<li><a href="/feedback">Feedback</a></li>
+				<li><a href="/settings">Settings</a></li>
+			</ul>
+			<form method="post" action="/logout" class="logout-form">
+				{{ csrf_input(request) }}
+				<button type="submit">Log out ({{ admin.username }})</button>
+			</form>
+		</nav>
+	</header>
+	{% endif %}
+
+	<main id="main-content">
+		{% block content %}{% endblock %}
+	</main>
+</body>
+</html>

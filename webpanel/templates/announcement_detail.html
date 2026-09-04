@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Announcement - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>Announcement</h1>
+<p><a href="/announcements">&larr; Back to announcements</a></p>
+
+<p class="pre-wrap">{{ announcement.body }}</p>
+<p class="hint">Sent {{ announcement.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
+
+<h2>Recipients</h2>
+<p>Telegram gives bots no read receipts, so "Delivered" means the message reached the user's chat, not that they opened it.</p>
+
+<table>
+	<caption>Per-account delivery status</caption>
+	<thead>
+		<tr>
+			<th scope="col">Account</th>
+			<th scope="col">Status</th>
+			<th scope="col">Delivered at</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for delivery in deliveries %}
+		<tr>
+			<th scope="row">{{ delivery.username }}</th>
+			<td>
+				{% if delivery.status == "sent" %}
+				<span class="status-badge status-ok">Delivered</span>
+				{% elif delivery.status == "failed" %}
+				<span class="status-badge status-blocked">Failed</span>
+				{% else %}
+				<span class="status-badge">Pending</span>
+				{% endif %}
+			</td>
+			<td>{{ delivery.sent_at.strftime("%Y-%m-%d %H:%M") if delivery.sent_at else "-" }}</td>
+		</tr>
+		{% else %}
+		<tr>
+			<td colspan="3">No recipients.</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Users - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>Users</h1>
+
+<table>
+	<caption>Everyone with a translator bot account</caption>
+	<thead>
+		<tr>
+			<th scope="col">Username</th>
+			<th scope="col">Telegram ID</th>
+			<th scope="col">Created</th>
+			<th scope="col">Status</th>
+			<th scope="col">Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for user in users %}
+		<tr>
+			<th scope="row">{{ user.username }}</th>
+			<td>{{ user.telegram_user_id }}</td>
+			<td>{{ user.created_at.strftime("%Y-%m-%d") }}</td>
+			<td>
+				{% if user.is_blocked %}
+				<span class="status-badge status-blocked">Blocked</span>
+				{% else %}
+				<span class="status-badge status-ok">Active</span>
+				{% endif %}
+			</td>
+			<td>
+				<form method="post" action="/users/{{ user.id }}/{{ 'unblock' if user.is_blocked else 'block' }}" class="inline-form">
+					{{ csrf_input(request) }}
+					<button type="submit" class="{{ 'secondary' if user.is_blocked else 'danger' }}">
+						{{ "Unblock " ~ user.username if user.is_blocked else "Block " ~ user.username }}
+					</button>
+				</form>
+				<a href="/users/{{ user.id }}/delete">Delete {{ user.username }}</a>
+			</td>
+		</tr>
+		{% else %}
+		<tr>
+			<td colspan="5">No users yet.</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

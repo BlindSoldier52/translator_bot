@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Settings - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>Settings</h1>
+
+{% if saved %}
+<p role="alert" class="form-success">Settings updated successfully.</p>
+{% endif %}
+
+{% if error %}
+<p role="alert" class="form-error">{{ error }}</p>
+{% endif %}
+
+<form method="post" action="/settings" novalidate>
+	{{ csrf_input(request) }}
+	<h2>Daily translation limit</h2>
+	<p>This is the maximum number of messages the bot will translate per day, across all groups combined. Applies immediately, no restart needed.</p>
+
+	<div class="field">
+		<label for="daily_message_limit">Daily message limit</label>
+		<input
+			type="number"
+			id="daily_message_limit"
+			name="daily_message_limit"
+			min="1"
+			step="1"
+			required
+			value="{{ daily_message_limit }}">
+		<p class="hint">Enter a whole number of at least 1.</p>
+	</div>
+
+	<h2>Maintenance mode</h2>
+	<p>While this is on, the bot won't translate anything in any group. Each group gets the message below exactly once, then goes quiet until you turn maintenance off and on again.</p>
+
+	<div class="field">
+		<label for="maintenance_enabled">
+			<input
+				type="checkbox"
+				id="maintenance_enabled"
+				name="maintenance_enabled"
+				value="true"
+				{% if maintenance_enabled %}checked{% endif %}>
+			Enable maintenance mode
+		</label>
+	</div>
+
+	<div class="field">
+		<label for="maintenance_message">Maintenance message</label>
+		<textarea
+			id="maintenance_message"
+			name="maintenance_message"
+			rows="3"
+			placeholder="I'm down for maintenance right now, back to translating again soon. Thanks for your patience!">{{ maintenance_message }}</textarea>
+		<p class="hint">Leave blank to use the default message above.</p>
+	</div>
+
+	<button type="submit">Save</button>
+</form>
+{% endblock %}

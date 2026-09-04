@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Feedback - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>Feedback</h1>
+
+<table>
+	<caption>Feedback sent by bot accounts</caption>
+	<thead>
+		<tr>
+			<th scope="col">From</th>
+			<th scope="col">Message</th>
+			<th scope="col">Received</th>
+			<th scope="col">Status</th>
+			<th scope="col">Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in feedback_items %}
+		<tr>
+			<th scope="row">{{ item.username }}</th>
+			<td class="pre-wrap">{{ item.message }}</td>
+			<td>{{ item.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+			<td>
+				{% if item.is_reviewed %}
+				<span class="status-badge status-ok">Reviewed</span>
+				{% else %}
+				<span class="status-badge status-blocked">New</span>
+				{% endif %}
+			</td>
+			<td>
+				<form method="post" action="/feedback/{{ item.id }}/{{ 'unreview' if item.is_reviewed else 'review' }}" class="inline-form">
+					{{ csrf_input(request) }}
+					<button type="submit" class="secondary">
+						{{ "Mark unreviewed" if item.is_reviewed else "Mark reviewed" }}
+					</button>
+				</form>
+			</td>
+		</tr>
+		{% else %}
+		<tr>
+			<td colspan="5">No feedback yet.</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

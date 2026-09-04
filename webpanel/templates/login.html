@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Log in - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>Log in</h1>
+
+{% if error %}
+<p role="alert" class="form-error">{{ error }}</p>
+{% endif %}
+
+<form method="post" action="/login" novalidate>
+	{{ csrf_input(request) }}
+	<div class="field">
+		<label for="username">Username</label>
+		<input type="text" id="username" name="username" autocomplete="username" required value="{{ submitted_username or '' }}">
+	</div>
+	<div class="field">
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password" autocomplete="current-password" required>
+	</div>
+	<button type="submit">Log in</button>
+</form>
+{% endblock %}

@@ -1,0 +1,2 @@
+class ImageTranslationError(Exception):
+	pass

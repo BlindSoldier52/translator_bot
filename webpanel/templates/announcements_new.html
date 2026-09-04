@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}New announcement - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>New announcement</h1>
+<p>This will be sent as a private Telegram message to every bot account that isn't blocked. Groups never receive it.</p>
+
+{% if error %}
+<p role="alert" class="form-error">{{ error }}</p>
+{% endif %}
+
+<form method="post" action="/announcements" novalidate>
+	{{ csrf_input(request) }}
+	<div class="field">
+		<label for="body">Announcement text</label>
+		<textarea id="body" name="body" required>{{ body or "" }}</textarea>
+		<p class="hint">Multiple lines are supported.</p>
+	</div>
+	<button type="submit">Send announcement</button>
+</form>
+{% endblock %}

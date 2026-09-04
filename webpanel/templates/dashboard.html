@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Translator Bot Admin{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<h2>Today's usage</h2>
+<div class="stat-grid">
+	<div class="stat-card">
+		<p class="stat-label">Messages translated today</p>
+		<p class="stat-value">{{ today_count }} / {{ daily_limit }}</p>
+	</div>
+	<div class="stat-card">
+		<p class="stat-label">Active groups</p>
+		<p class="stat-value">{{ active_groups_count }}</p>
+	</div>
+	<div class="stat-card">
+		<p class="stat-label">Blocked groups</p>
+		<p class="stat-value">{{ blocked_groups_count }}</p>
+	</div>
+	<div class="stat-card">
+		<p class="stat-label">Registered users</p>
+		<p class="stat-value">{{ total_users_count }}</p>
+	</div>
+</div>
+
+<h2>Quick links</h2>
+<ul>
+	<li><a href="/groups">View and manage groups</a></li>
+	<li><a href="/users">View and manage users</a></li>
+	<li><a href="/settings">Change the daily translation limit</a></li>
+</ul>
+{% endblock %}
