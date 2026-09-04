@@ -25,8 +25,8 @@ from bot.handlers.gate import stop_blocked_users
 from bot.handlers.image_translate import handle_group_image, handle_private_image
 from bot.handlers.group_auth import handle_bot_added_to_group, reauthenticate_command, recheck_group_admins
 from bot.handlers.language import setlanguage_command
-from bot.handlers.privacy import privacy_command
 from bot.handlers.registration import cancel_command, handle_private_text, help_command, start_command
+from bot.handlers.source import source_command
 from bot.handlers.translate import handle_group_message, translate_command
 from shared.config import get_settings
 
@@ -112,7 +112,7 @@ async def post_init(application: Application) -> None:
 			BotCommand("help", "Show available commands"),
 			BotCommand("cancel", "Cancel whatever you're currently doing"),
 			BotCommand("feedback", "Send feedback to the admins"),
-			BotCommand("privacy", "See what I do with your data"),
+			BotCommand("source", "Get the source code I run on"),
 			BotCommand("setapikey", "Give me the API key I translate with"),
 			BotCommand("removeapikey", "Remove your API key"),
 			BotCommand("apikeystatus", "Show which key your translations use"),
@@ -140,7 +140,7 @@ def build_application() -> Application:
 	application.add_handler(CommandHandler("help", help_command, filters.ChatType.PRIVATE))
 	application.add_handler(CommandHandler("cancel", cancel_command, filters.ChatType.PRIVATE))
 	application.add_handler(CommandHandler("feedback", feedback_command, filters.ChatType.PRIVATE))
-	application.add_handler(CommandHandler("privacy", privacy_command, filters.ChatType.PRIVATE))
+	application.add_handler(CommandHandler("source", source_command))
 	application.add_handler(CommandHandler("setapikey", setapikey_command, filters.ChatType.PRIVATE))
 	application.add_handler(CommandHandler("removeapikey", removeapikey_command, filters.ChatType.PRIVATE))
 	application.add_handler(CommandHandler("apikeystatus", apikeystatus_command, filters.ChatType.PRIVATE))

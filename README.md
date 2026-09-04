@@ -270,7 +270,7 @@ In a private chat with the bot:
 - `/removeapikey` — take your key off again
 - `/apikeystatus` — see which key you're on
 - `/filesettings` — set up file and image translation for a group or for this chat
-- `/privacy` — what the bot does with your data
+- `/source` — where to get the code this bot runs on
 - `/feedback` — send a message to the people running the bot
 
 In a group, for admins:
@@ -282,22 +282,31 @@ In a group, for everyone:
 
 - `/translate` — translate something, like `/translate spanish hello there`, or reply to a message with `/translate spanish`
 
-## Privacy and data
+## What the software does with data
 
-Your password is hashed and can never be read back, by anyone. Your API key is
-encrypted before it's stored, and both the password message and the key
+This is a description of how the code behaves, which you can check against the
+source. It is not a privacy policy, and it is not a promise from whoever is
+running the copy you are talking to — see the note below.
+
+Passwords are hashed with argon2 and can never be read back, by anyone. API
+keys are encrypted before being stored. Both the password message and the key
 message are deleted from the chat as soon as they arrive.
 
-The bot doesn't keep the messages it translates. Once it has replied, all that
-remains is a note that a translation happened, between which two languages,
-and in which group. Files and images are handled entirely in memory and never
-written to disk.
+The bot does not keep the messages it translates. Once it has replied, all that
+remains is a row recording that a translation happened, between which two
+languages, and in which group. Files and images are handled entirely in memory
+and never written to disk.
 
-Worth being clear about: translating means sending the text to whichever AI
-provider's key is in use. What that company does with it is covered by their
-terms, so pick a provider you're comfortable with.
+Translating means sending the text to whichever AI provider's key is in use.
+What that company does with it is covered by their terms, so pick a provider
+you are comfortable with.
 
-Send `/privacy` to the bot for the full version.
+**Who is responsible.** Anyone can run this bot, on their own server, in any
+country. The person running the copy you are using controls where it is hosted,
+who can reach the database, how long anything is kept, and which law applies —
+and they may have modified the code. This project therefore ships no privacy
+policy on their behalf, because it cannot honestly make promises for them. Ask
+the operator, and use `/source` to read the code their copy is built from.
 
 ## Troubleshooting
 
@@ -361,7 +370,7 @@ let anyone interact with your modified version — over Telegram, or through the
 web panel — you must offer those people the source of your version**, even
 though you never hand out a file. Running it unmodified obliges you to nothing.
 
-So if you fork it and deploy your fork, publish your fork. The bot's `/privacy`
+So if you fork it and deploy your fork, publish your fork. The bot's `/source`
 command and the panel's footer already carry a link to the source; point them at
 your repository rather than removing them, and you have complied.
 

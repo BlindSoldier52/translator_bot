@@ -143,7 +143,7 @@ Then edit it and fill in:
 - `PANEL_HOST` / `PANEL_PORT` — where the panel binds. These are read by the
   application itself, so what you set here is what is actually listened on.
 - `SOURCE_URL` — where this version's source can be fetched. The bot prints it
-  in `/privacy` and the panel shows it in the footer. **If you are running a
+  in `/source` and the panel shows it in the footer. **If you are running a
   modified version, point this at your fork**; see the licence section below.
 
 There is no shared translation API key: every user brings their own through
@@ -477,6 +477,35 @@ a "Skip to main content" link for fast keyboard navigation.
   hardening (`ProtectSystem=strict`, `NoNewPrivileges`, empty capability set,
   and so on).
 
+## Data protection is yours, not this project's
+
+This software ships no privacy policy, and the bot has no `/privacy` command.
+That is deliberate. Anyone can run it, on any host, in any country, on a
+modified copy — so the project cannot honestly state where data lives, who can
+reach it, how long it is kept, or which law applies. Only you can.
+
+When you deploy this, **you are the data controller** for everyone who uses your
+copy. What that means in practice depends on where you and your users are:
+
+- In the EU/UK, the GDPR applies to you, not to this repository. You will need
+  a lawful basis, a privacy notice of your own, and a way to handle access and
+  erasure requests. Deleting a user from the panel already erases their account,
+  API key, feedback and delivery records, which covers the mechanical part of an
+  erasure request; the notice and the process are yours to write.
+- In the US, obligations vary by state and by who your users are.
+- Wherever you are, translation means sending user text to the AI provider whose
+  key is in use. That provider is a further recipient of the data, and your
+  notice should say so.
+
+What the code itself does is documented in README.md under "What the software
+does with data", and is verifiable from the source: argon2 password hashing,
+per-user encryption of stored API keys, no retention of translated message
+content, and files and images handled in memory only. That is a description of
+the software's behaviour, not a statement of your practices.
+
+If you want to give your users a privacy notice, publish it wherever suits you
+and tell them where it is. Nothing in the bot competes with it.
+
 ## Licence and your obligations as an operator
 
 This project is licensed under the GNU Affero General Public License v3.0. The
@@ -495,9 +524,9 @@ In practice:
   and copyright notices intact.
 - Running a **modified** version means publishing your modifications. Put your
   fork somewhere readable and set `SOURCE_URL` to it. The offer is already
-  wired into `/privacy` and the panel footer, and both read that variable, so
+  wired into `/source` and the panel footer, and both read that variable, so
   setting it is the whole of the work.
-- Do not remove the source offer from `/privacy` or the footer. That is the
+- Do not remove the source offer from `/source` or the footer. That is the
   mechanism by which an operator complies; deleting it does not remove the
   obligation, only the compliance.
 

@@ -42,7 +42,7 @@ HELP_TEXT = (
 	"Here's what I can do.\n\n"
 	"In a private chat with me, /start creates your account, /help shows this message, and "
 	"/cancel stops whatever we're in the middle of. /feedback sends a note to the bot admins, "
-	"and /privacy tells you what I do with your data.\n\n"
+	"and /source tells you where to get the code I run on.\n\n"
 	"/setapikey gives me the API key I translate with. I need one to work at all, so this is "
 	"the first thing to do. In a group I use the sender's key if they have one, otherwise the "
 	"key of the admin who set me up there. /removeapikey takes yours away again, and "
